@@ -25,12 +25,27 @@ public class V2rayController {
         Utilities.copyAssets(context);
         AppConfigs.APPLICATION_ICON = app_icon;
         AppConfigs.APPLICATION_NAME = app_name;
+
+        /*        
         context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
             }
-        }, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        }, new IntentFilter("V2RAY_CONNECTION_INFO"));*/
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context arg0, Intent arg1) {
+                AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
+            }
+        };
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+             context.registerReceiver(receiver, new IntentFilter("V2RAY_CONNECTION_INFO"), Context.RECEIVER_EXPORTED);
+        } else {
+             context.registerReceiver(receiver, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        }
     }
 
     public static void changeConnectionMode(final AppConfigs.V2RAY_CONNECTION_MODES connection_mode) {
